@@ -9,3 +9,7 @@ company string Nome da empresa ou local de trabalho
 phone string DDD + número (ex: 85912345678)
 email string Endereço de e-mail válido
   """
+
+mix escript.build
+
+./agenda
