@@ -1,0 +1,11 @@
+  """
+  add --name Ana Lima --company Acme
+--phone 85912345678 --email
+ana.lima@acme.com
+
+id integer Gerado automaticamente (timestamp em ms)
+name string Nome completo da pessoa
+company string Nome da empresa ou local de trabalho
+phone string DDD + número (ex: 85912345678)
+email string Endereço de e-mail válido
+  """
