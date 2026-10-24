@@ -20,17 +20,8 @@ defmodule Agenda.CLI do
         IO.puts("   Tarefa ##{id} marcada como concluída")
         loop()
       :list ->
-        todos = Agenda.list()
-        if Enum.empty?(todos) do
-          IO.puts("   Nenhuma tarefa cadastrada.")
-        else
-          IO.puts("---------------------------------------------")
-          Enum.each(todos, fn t ->
-            status = if t.done, do: "[OK]", else: "[  ]"
-            IO.puts("   #{status} ##{t.id} - #{t.name}")
-          end)
-          IO.puts("---------------------------------------------")
-        end
+        contatos = Agenda.list()
+        IO.inspect(contatos)
         loop()
         :exit ->
           IO.puts("Até mais!")
@@ -45,8 +36,8 @@ defmodule Agenda.CLI do
   #end
 
   def parse_add(infos) do
-    case String.split(infos, ["--name ", " --company ", " --phone ", " --email "]) do
-      ["", name, company, phone, email] ->
+    case String.split(infos, ["--name ", " --company ", " --phone ", " --email "], trim: true) do
+      [name, company, phone, email] ->
         {:addItem, name, company, phone, email}
       _ ->
         :unknown
