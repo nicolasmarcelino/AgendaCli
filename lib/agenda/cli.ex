@@ -11,17 +11,35 @@ defmodule Agenda.CLI do
       {:addItem, name, company, phone, email} ->
         Agenda.addItem(name, company, phone, email)
         loop()
+      {:search, param, dado} ->
+        IO.inspect(Agenda.search(param, dado))
+        loop()
       {:del, id} ->
         Agenda.del(id)
-        IO.puts("   Tarefa ##{id} removida.")
         loop()
-      {:done, id} ->
-        Agenda.mark_done(id)
-        IO.puts("   Tarefa ##{id} marcada como concluída")
+      {:show, id} ->
+        c = Agenda.show(id)
+        IO.puts("""
+
+          [#{c.id}]
+          Name: #{c.name}
+          Company: #{c.company}
+          Phone: #{c.phone}
+          E-mail: #{c.email}
+          """)
         loop()
       :list ->
         contatos = Agenda.list()
-        IO.inspect(contatos)
+        Enum.each(contatos, fn c ->
+          IO.puts("""
+
+          [#{c.id}]
+          Name: #{c.name}
+          Company: #{c.company}
+          Phone: #{c.phone}
+          E-mail: #{c.email}
+          """)
+        end)
         loop()
         :exit ->
           IO.puts("Até mais!")
@@ -31,9 +49,21 @@ defmodule Agenda.CLI do
     end
   end
 
-  #def parse("add -- name " <> name <> " --company " <> company <> " --phone " <> phone <> #"  --email" <> email) do
-  #  {:addItem, name, company, phone, email}
-  #end
+  def parse_search("--email " <> dado) do
+    {:search, :company, dado}
+  end
+
+  def parse_search("--number " <> dado) do
+    {:search, :company, dado}
+  end
+
+  def parse_search("--company " <> dado) do
+    {:search, :company, dado}
+  end
+
+  def parse_search("--name " <> dado) do
+    {:search, :name, dado}
+  end
 
   def parse_add(infos) do
     case String.split(infos, ["--name ", " --company ", " --phone ", " --email "], trim: true) do
@@ -48,12 +78,16 @@ defmodule Agenda.CLI do
     parse_add(infos)
   end
 
+  def parse("search " <> params) do
+    parse_search(params)
+  end
+
   def parse("del " <> id) do
     {:del, parse_id(id)}
   end
 
-  def parse("done " <> id) do
-    {:done, parse_id(id)}
+  def parse("show " <> id) do
+    {:show, parse_id(id)}
   end
 
   def parse("list") do
