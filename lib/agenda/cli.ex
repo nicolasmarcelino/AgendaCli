@@ -8,9 +8,8 @@ defmodule Agenda.CLI do
   def loop do
     input = IO.gets("agenda> ") |> String.trim()
     case parse(input) do
-      {:add, name} ->
-        Agenda.add(name)
-        IO.puts("   Tarefa \"#{name}\" cadastrada com sucesso.")
+      {:addItem, name, company, phone, email} ->
+        Agenda.addItem(name, company, phone, email)
         loop()
       {:del, id} ->
         Agenda.del(id)
@@ -41,9 +40,21 @@ defmodule Agenda.CLI do
     end
   end
 
+  #def parse("add -- name " <> name <> " --company " <> company <> " --phone " <> phone <> #"  --email" <> email) do
+  #  {:addItem, name, company, phone, email}
+  #end
 
-  def parse("add " <> name) do
-    {:add, name}
+  def parse_add(infos) do
+    case String.split(infos, ["--name ", " --company ", " --phone ", " --email "]) do
+      ["", name, company, phone, email] ->
+        {:addItem, name, company, phone, email}
+      _ ->
+        :unknown
+    end
+  end
+
+  def parse("add " <> infos) do
+    parse_add(infos)
   end
 
   def parse("del " <> id) do
