@@ -1,5 +1,5 @@
 defmodule Agendacli do
-  def main(_args) do
+  def main do
     IO.puts("""
     --------------------------------------------
     Agenda CLI
