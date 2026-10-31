@@ -7,6 +7,9 @@ defmodule Agendacli do
     [add --name <nome> --company <empresa> --phone <telefone> --email <e-mail>]
     Adicionar contato
 
+    [edit --<campo> dado_atualizado]
+    Editar informação de um contato
+
     [list]
     Listar contatos
 
@@ -40,6 +43,9 @@ defmodule Agendacli do
       {:del, id} ->
         Agendacli.Contacts.del(id)
         loop()
+      {:edit, id, field, novo_valor} ->
+        Agendacli.Contacts.edit(id, field, novo_valor)
+        loop()
       {:show, id} ->
         c = Agendacli.Contacts.show(id)
         IO.puts("""
@@ -70,6 +76,34 @@ defmodule Agendacli do
           IO.puts("Comando inválido, tente novamente.")
           loop()
     end
+  end
+
+  def parse_edit([id, "--email", new_value]) do
+    {:edit,
+    parse_id(id),
+    :email,
+    new_value}
+  end
+
+  def parse_edit([id, "--phone", new_value]) do
+    {:edit,
+    parse_id(id),
+    :phone,
+    new_value}
+  end
+
+  def parse_edit([id, "--company", new_value]) do
+    {:edit,
+    parse_id(id),
+    :company,
+    new_value}
+  end
+
+  def parse_edit([id, "--name", new_value]) do
+    {:edit,
+    parse_id(id),
+    :name,
+    new_value}
   end
 
   def parse_search("--email " <> dado) do
@@ -120,6 +154,13 @@ defmodule Agendacli do
 
   def parse("show " <> id) do
     {:show, parse_id(id)}
+  end
+
+  def parse("edit " <> rest) do
+    case String.split(rest, " ", parts: 3) do
+      [id, flag, new_value] -> parse_edit([id, flag, new_value])
+      _ -> :unknown
+    end
   end
 
   def parse("list") do

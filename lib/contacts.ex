@@ -24,6 +24,10 @@ defmodule Agendacli.Contacts do
     GenServer.call(__MODULE__, :list)
   end
 
+  def edit(id, field, new_value) do
+    GenServer.cast(__MODULE__, {:edit, id, field, new_value})
+  end
+
 
   def init(:ok) do
     state = AgendaCli.Store.load
@@ -40,6 +44,19 @@ defmodule Agendacli.Contacts do
   def handle_cast({:del, id}, state) do
     new_state = Enum.reject(state, fn c -> c.id === id end)
     AgendaCli.Store.save(new_state)
+    {:noreply, new_state}
+  end
+
+  def handle_cast({:edit, id, field, new_value}, state) do
+    new_state =
+      Enum.map(state, fn c ->
+        if c.id == id do
+          Map.put(c, field, new_value)
+        else
+          c
+        end
+      end)
+
     {:noreply, new_state}
   end
 
