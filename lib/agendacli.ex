@@ -38,7 +38,17 @@ defmodule Agendacli do
         Agendacli.Contacts.addItem(name, company, phone, email)
         loop()
       {:search, param, dado} ->
-        IO.inspect(Agendacli.Contacts.search(param, dado))
+      contatos = Agendacli.Contacts.search(param, dado)
+      Enum.each(contatos, fn c ->
+          IO.puts("""
+
+          [#{c.id}]
+          Name: #{c.name}
+          Company: #{c.company}
+          Phone: #{c.phone}
+          E-mail: #{c.email}
+          """)
+        end)
         loop()
       {:del, id} ->
         Agendacli.Contacts.del(id)
